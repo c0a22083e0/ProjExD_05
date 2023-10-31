@@ -1,8 +1,9 @@
-import pygame
+import pygame 
 import sys
 import random 
 import numpy as np
 import datetime
+
 
 OCTO_CAT_VELOCITY = 4
 OCTO_CAT_JUMP = 20
@@ -38,6 +39,10 @@ class Octo_Cat:
         self.life = 4
         #if the player is inflicted with damage, it cannot be inflicted again for a certain amount of time
         self.life_lost_time = 0
+        #基本のキーボード状態をFalseとする
+        self.shift_pressed = False
+        #変数のためローカルに新しく速度を作成。デフォルトは4
+        self.OCTO_CAT_VELOCITY = 4
     
     #movements
     def update(self,event):
@@ -52,6 +57,10 @@ class Octo_Cat:
                 self.move_down = True
             if event.key == pygame.K_SPACE:
                 self.immunity = True
+            #左シフトダウンの時の処理
+            if event.key == pygame.K_LSHIFT:
+                self.shift_pressed = True
+                self.update_velocity()
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_RIGHT:
                 self.move_right = False
@@ -61,7 +70,16 @@ class Octo_Cat:
                 self.move_up = False
             if event.key == pygame.K_DOWN:
                 self.move_down = False
-
+            #左シフトアップの時の処理
+            if event.key == pygame.K_LSHIFT:
+                self.shift_pressed = False
+                self.update_velocity()
+    #シフトが押された際の速度を分岐させる関数
+    def update_velocity(self):
+        if self.shift_pressed == True:
+            self.OCTO_CAT_VELOCITY = 8
+        if self.shift_pressed == False :
+            self.OCTO_CAT_VELOCITY = 4
 #defiens ropes and dots
 class Rope:
     def __init__(self,x=0,y=0,velocity=0,tilt=0,color=0):
@@ -165,22 +183,25 @@ def main():
             if event.type == pygame.QUIT:  
                 endFlag = True
                 force_quit = True
+                
+
+
             else:
                 octo_cat.update(event)
 
         #move the player
         if octo_cat.move_right == True:
             if octo_cat.x < 620:
-                octo_cat.x += OCTO_CAT_VELOCITY
+                octo_cat.x += octo_cat.OCTO_CAT_VELOCITY
         if octo_cat.move_left == True:
             if octo_cat.x > 00:
-                octo_cat.x -= OCTO_CAT_VELOCITY
+                octo_cat.x -= octo_cat.OCTO_CAT_VELOCITY
         if octo_cat.move_up == True:
             if octo_cat.y > 00:
-                octo_cat.y -= OCTO_CAT_VELOCITY
+                octo_cat.y -= octo_cat.OCTO_CAT_VELOCITY
         if octo_cat.move_down == True:
             if octo_cat.y < 460:
-                octo_cat.y += OCTO_CAT_VELOCITY
+                octo_cat.y += octo_cat.OCTO_CAT_VELOCITY
 
         #make the instances of ropes and dots
         if (time_elapsed == 20):
