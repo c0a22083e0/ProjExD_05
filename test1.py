@@ -6,13 +6,20 @@ import datetime
 
 OCTO_CAT_VELOCITY = 4
 OCTO_CAT_JUMP = 20
-COLORS = [[255,0,0],[255,165,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[128,0,128]]
 
 pygame.init()      
 screen = pygame.display.set_mode((640, 480)) 
 pygame.display.set_caption("Jump the Rope") 
 heart_image = pygame.image.load("ex05/images/heart.png")
 clock = pygame.time.Clock()
+
+def COLORS():
+    x = random.randint(0,255)
+    y =random.randint(0,255)
+    z =random.randint(0,255)
+    COLORS = [x,y,z]
+    return COLORS
+
 
 class Octo_Cat:
     def __init__(self,x,y):
@@ -69,14 +76,14 @@ class Rope:
         self.y = y
         self.velocity = velocity
         self.tilt = tilt
-        self.color = color
+        #self.color = color
     def update(self):
         return
     def judge(self,octo_cat):
         return
-
-#vertical ropes
+        
 class Straight_Rope(Rope):
+    
     def update(self):
         if(self.x > 635):
             self.direction = "LEFT"
@@ -86,7 +93,7 @@ class Straight_Rope(Rope):
             self.x += self.velocity
         elif(self.direction == "LEFT"):
             self.x -= self.velocity
-        pygame.draw.line(screen, COLORS[3], [self.x, 0], [self.x, 480], 5)
+        pygame.draw.line(screen, COLORS(), [self.x, 0], [self.x, 480], 5)
 
     #checks if the player and the rope collided
     def judge(self,octo_cat):
@@ -106,7 +113,7 @@ class Straight_Rope_Horizontal(Rope):
             self.y -= self.velocity
         elif(self.direction == "UP"):
             self.y += self.velocity
-        pygame.draw.line(screen, COLORS[3],[0, self.y], [640, self.y], 5)
+        pygame.draw.line(screen, COLORS(),[0, self.y], [640, self.y], 5)
 
     #checks if the player and the rope collided
     def judge(self,octo_cat):
@@ -120,7 +127,7 @@ class Shooting_Star(Rope):
     def update(self):
         self.x += self.tilt
         self.y += self.velocity
-        pygame.draw.circle(screen, COLORS[self.color], [self.x, self.y], 6)
+        pygame.draw.circle(screen, COLORS(), [self.x, self.y], 6)
     
     #checks if the player and the dot collided
     def judge(self,octo_cat):
@@ -153,6 +160,7 @@ def main():
     octo_cat = Octo_Cat(400,400)
     time_elapsed = 0
     force_quit = False
+    q = 0
 
     ropes = []
 
