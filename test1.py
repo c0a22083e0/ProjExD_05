@@ -1,3 +1,5 @@
+
+
 import pygame
 import sys
 import random 
@@ -7,7 +9,6 @@ import datetime
 OCTO_CAT_VELOCITY = 4
 OCTO_CAT_JUMP = 20
 COLORS = [[255,0,0],[255,165,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[128,0,128]]
-
 
 pygame.init()      
 screen = pygame.display.set_mode((640, 480)) 
@@ -33,7 +34,7 @@ class Octo_Cat:
         self.move_down = False
         #if jumping or not
         self.immunity = False
-        #the player cannot jump more than a specified amount of time
+        #プレーヤーは一定以上の時間はジャンプし続けられない
         self.immunity_count = 0
         #life
         self.life = 4
@@ -136,14 +137,11 @@ def open():
     text1 = font1.render("Jump the Rope", False, (255,255,255))
     font2 = pygame.font.SysFont(None, 40)
     text2 = font1.render("Press Any Key to Start", False, (255,255,255))
-    font3 = pygame.font.SysFont(None, 40)
-    text3 = font1.render("Press 'P' to Pause/Resume", False, (255,255,255))
 
     while endFlag == False:
         screen.fill((0,0,0))
         screen.blit(text1,(30,50))
         screen.blit(text2,(20,150))
-        
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
@@ -160,26 +158,26 @@ def main():
     paused = False
     font3 = pygame.font.SysFont(None, 40)
     text3 = font3.render("Press 'P' to Pause/Resume", False, (255,255,255))
+
     ropes = []
 
     while endFlag == False:
         clock.tick(60) 
         time_elapsed += 1
         screen.fill((0,0,0))
-        if paused:
-            screen.blit(text3,(20,250))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
                 endFlag = True
                 force_quit = True
+            else:
+                octo_cat.update(event)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     paused =not paused
                     if paused:
-                        pygame.time.delay(1000)# キーの連打を防止するための遅延
-            else:
-                octo_cat.update(event)
+                        screen.blit(text3,(20,250))
+                        pygame.time.delay(1000)
 
         #move the player
         if octo_cat.move_right == True:
@@ -245,6 +243,9 @@ def main():
                         endFlag = True
         for i in range(octo_cat.life - 1):
             screen.blit(heart_image,(i * 30,50))
+        font4 = pygame.font.SysFont(None, 40)
+        text4 = font4.render("Time: " + str(time_elapsed // 60), False, (255, 255, 255))
+        screen.blit(text4, (20, 20))
         pygame.display.update()
     quit(time_elapsed,force_quit) 
 
