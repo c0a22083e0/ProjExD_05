@@ -8,6 +8,7 @@ OCTO_CAT_VELOCITY = 4
 OCTO_CAT_JUMP = 20
 COLORS = [[255,0,0],[255,165,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[128,0,128]]
 
+
 pygame.init()      
 screen = pygame.display.set_mode((640, 480)) 
 pygame.display.set_caption("Jump the Rope") 
@@ -135,11 +136,14 @@ def open():
     text1 = font1.render("Jump the Rope", False, (255,255,255))
     font2 = pygame.font.SysFont(None, 40)
     text2 = font1.render("Press Any Key to Start", False, (255,255,255))
+    font3 = pygame.font.SysFont(None, 40)
+    text3 = font1.render("Press 'P' to Pause/Resume", False, (255,255,255))
 
     while endFlag == False:
         screen.fill((0,0,0))
         screen.blit(text1,(30,50))
         screen.blit(text2,(20,150))
+        
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
@@ -153,18 +157,27 @@ def main():
     octo_cat = Octo_Cat(400,400)
     time_elapsed = 0
     force_quit = False
-
+    paused = False
+    font3 = pygame.font.SysFont(None, 40)
+    text3 = font3.render("Press 'P' to Pause/Resume", False, (255,255,255))
     ropes = []
 
     while endFlag == False:
         clock.tick(60) 
         time_elapsed += 1
         screen.fill((0,0,0))
+        if paused:
+            screen.blit(text3,(20,250))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
                 endFlag = True
                 force_quit = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    paused =not paused
+                    if paused:
+                        pygame.time.delay(1000)# キーの連打を防止するための遅延
             else:
                 octo_cat.update(event)
 
