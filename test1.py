@@ -149,10 +149,18 @@ def open():
                 main()
 
 def main():
+    global is_new_bgm_playing
     endFlag = False
     octo_cat = Octo_Cat(400,400)
     time_elapsed = 0
     force_quit = False
+    BGM = pygame.mixer.Sound('ex05/fig/BGM.mp3')
+    BGM.set_volume(0.2)  # 音量を設定（0.0から1.0の範囲）
+    BGM.play(-1)  # -1を渡すと無限ループ再生
+    New_BGM = pygame.mixer.Sound('ex05/fig/maou.mp3')
+    is_new_bgm_playing = False  # 新しいBGMの再生状態をトラッキング
+    game_over_sound = pygame.mixer.Sound('ex05/fig/dead.wav')
+    
 
     ropes = []
 
@@ -165,7 +173,12 @@ def main():
             if event.type == pygame.QUIT:  
                 endFlag = True
                 force_quit = True
-            else:
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB:
+                    if pygame.mixer.get_busy():
+                        BGM.stop()  # 現在のBGMを停止
+                        New_BGM.stop()
+                        New_BGM.play(-1)  # 新しいBGMを再生
                 octo_cat.update(event)
 
         #move the player
@@ -230,10 +243,17 @@ def main():
                     octo_cat.life -= 1
                     if octo_cat.life == 0:
                         endFlag = True
+        if octo_cat.life == 0:
+            endFlag = True
+            if pygame.mixer.get_busy():
+                BGM.stop()  # ゲームオーバー時にBGMを停止
+                New_BGM.stop()
+            game_over_sound.play()  # ゲームオーバー音楽を再生
+
         for i in range(octo_cat.life - 1):
             screen.blit(heart_image,(i * 30,50))
         pygame.display.update()
-    quit(time_elapsed,force_quit) 
+    quit(time_elapsed,force_quit)
 
 #when quitting the game
 def quit(score,force_quit):
