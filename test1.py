@@ -1,5 +1,3 @@
-
-
 import pygame
 import sys
 import random 
@@ -34,12 +32,14 @@ class Octo_Cat:
         self.move_down = False
         #if jumping or not
         self.immunity = False
-        #プレーヤーは一定以上の時間はジャンプし続けられない
+        #the player cannot jump more than a specified amount of time
         self.immunity_count = 0
         #life
         self.life = 4
         #if the player is inflicted with damage, it cannot be inflicted again for a certain amount of time
         self.life_lost_time = 0
+
+        self.is_paused = False
     
     #movements
     def update(self,event):
@@ -54,6 +54,8 @@ class Octo_Cat:
                 self.move_down = True
             if event.key == pygame.K_SPACE:
                 self.immunity = True
+            if event.key == pygame.K_p:
+                self.is_paused = not self.is_paused
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_RIGHT:
                 self.move_right = False
@@ -76,8 +78,7 @@ class Rope:
         return
     def judge(self,octo_cat):
         return
-
-#vertical ropes
+        
 class Straight_Rope(Rope):
     def update(self):
         if(self.x > 635):
@@ -155,15 +156,15 @@ def main():
     octo_cat = Octo_Cat(400,400)
     time_elapsed = 0
     force_quit = False
-    paused = False
-    font3 = pygame.font.SysFont(None, 40)
-    text3 = font3.render("Press 'P' to Pause/Resume", False, (255,255,255))
 
     ropes = []
 
     while endFlag == False:
-        clock.tick(60) 
-        time_elapsed += 1
+        clock.tick(60)
+        if octo_cat.is_paused == False:
+            time_elapsed += 1
+        font2=pygame.font.SysFont(None, 80)
+        text3 = font2.render("Pause now", False, (255,255,255))
         screen.fill((0,0,0))
 
         for event in pygame.event.get():
@@ -172,12 +173,11 @@ def main():
                 force_quit = True
             else:
                 octo_cat.update(event)
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    paused =not paused
-                    if paused:
-                        screen.blit(text3,(20,250))
-                        pygame.time.delay(1000)
+
+        if octo_cat.is_paused:
+            screen.blit(text3,(20,150))
+            pygame.display.update()
+            continue
 
         #move the player
         if octo_cat.move_right == True:
@@ -215,7 +215,7 @@ def main():
             ropes.append(shooting_star3)
             shooting_star4 = Shooting_Star(10,random.randrange(480),random.randrange(5) + 5,random.randrange(10) - 5)
             ropes.append(shooting_star4)
-
+        
         #move all the ropes and dots
         for rope in ropes:
             rope.update()
