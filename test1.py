@@ -8,7 +8,7 @@ import datetime
 
 OCTO_CAT_VELOCITY = 4
 OCTO_CAT_JUMP = 20
-COLORS = [[255,0,0],[255,165,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[128,0,128]]
+
 
 BGM_FILES = ["ex05/fig/BGM.mp3",
              "ex05/fig/baadakkuman.mp3",
@@ -27,9 +27,22 @@ pygame.display.set_caption("Jump the Rope")
 heart_image = pygame.image.load("ex05/images/heart.png")
 clock = pygame.time.Clock()
 
+
+def COLORS():
+    x = random.randint(0,255)
+    y =random.randint(0,255)
+    z =random.randint(0,255)
+    COLORS = [x,y,z]
+    return COLORS
+
+
 class Octo_Cat:
     def __init__(self,x,y):
+
         #position(プレーヤーのポジション)
+
+        #Position
+
         self.x = x
         self.y = y
         #image before scaling(サイズを変える前の画像)
@@ -93,6 +106,8 @@ class Octo_Cat:
                 self.move_up = False
             if event.key == pygame.K_DOWN:
                 self.move_down = False
+            if event.key == pygame.K_RSHIFT:  # 右シフトキーが離されたとき
+                self.right_shift_pressed = False
 
             if event.key == pygame.K_RSHIFT:  # 右シフトキーが離されたとき
                 self.right_shift_pressed = False
@@ -117,14 +132,17 @@ class Rope:
         self.y = y
         self.velocity = velocity
         self.tilt = tilt
-        self.color = color
+        #self.color = color
     def update(self):
         return
     def judge(self,octo_cat):
         return
 
+
 #vertical ropes(垂直の線)
+
 class Straight_Rope(Rope):
+    
     def update(self):
         if(self.x > 635):
             self.direction = "LEFT"
@@ -134,8 +152,10 @@ class Straight_Rope(Rope):
             self.x += self.velocity
         elif(self.direction == "LEFT"):
             self.x -= self.velocity
+        # pygame.draw.line(screen, COLORS[3], [self.x, 0], [self.x, 480], 5)
 
-        pygame.draw.line(screen, COLORS[3], [self.x, 0], [self.x, 480], 5)
+        pygame.draw.line(screen, COLORS(), [self.x, 0], [self.x, 480], 5)
+
 
     #checks if the player and the rope collided
     #(プレーヤーとぶつかったか判定)
@@ -156,8 +176,10 @@ class Straight_Rope_Horizontal(Rope):
             self.y -= self.velocity
         elif(self.direction == "UP"):
             self.y += self.velocity
-        
-        pygame.draw.line(screen, COLORS[3],[0, self.y], [640, self.y], 5)
+        # pygame.draw.line(screen, COLORS[3],[0, self.y], [640, self.y], 5)
+
+        pygame.draw.line(screen, COLORS(),[0, self.y], [640, self.y], 5)
+
 
     #checks if the player and the rope collided
     #(プレーヤーとぶつかったか判定)
@@ -173,7 +195,11 @@ class Shooting_Star(Rope):
         self.x += self.tilt
         self.y += self.velocity
 
-        pygame.draw.circle(screen, COLORS[self.color], [self.x, self.y], 6)
+
+        # pygame.draw.circle(screen, COLORS[self.color], [self.x, self.y], 6)
+
+        pygame.draw.circle(screen, COLORS(), [self.x, self.y], 6)
+
     
     #checks if the player and the dot collided
     #(プレーヤーとぶつかったか判定)
@@ -234,12 +260,16 @@ def main():
     octo_cat = Octo_Cat(400,400)
     time_elapsed = 0
     force_quit = False
+
     pygame.mixer.init()
     # ゲーム開始時に最初のBGMを再生
     pygame.mixer.music.load(BGM_FILES[CURRENT_BGM_INDEX])
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(-1)
     is_bgm_playing = True
+
+    q = 0
+
 
     ropes = []
     score = 0
@@ -275,6 +305,29 @@ def main():
 
         # timeの計算と表示
         if time_elapsed % 60 == 0:  # timeを増やす頻度を調整
+            time += 1
+
+            if time >= 10:  # timeが10以上になった場合の処理
+                """
+                for color in range(3):
+                    if COLORS[color][0] == 255:  # 色が反転する部分
+                        COLORS[color][0] = 0
+                    else:
+                        COLORS[color][0] = 255
+                """
+                time *= 1  
+
+        font = pygame.font.SysFont(None, 36)
+        text = font.render(f"time: {time}", True, (255, 255, 0)) #timeの表示
+        screen.blit(text, (10, 10)) #timeの表示位置
+        
+
+
+        #move the player(プレーヤーを動かす)
+
+        """
+        # timeの計算と表示
+        if time_elapsed % 60 == 0:  # timeを増やす頻度を調整
             score += 1
 
             if score >= 10:  # timeが10以上になった場合の処理
@@ -283,12 +336,14 @@ def main():
                         COLORS[color][0] = 0
                     else:
                         COLORS[color][0] = 255
+                
 
                 score *= 1  
 
         font = pygame.font.SysFont(None, 36)
-        text = font.render(f"time: {score}", True, (255, 255, 0)) #timeの表示
+        text = font.render(f"time: {time_elapsed}", True, (255, 255, 0)) #timeの表示
         screen.blit(text, (10, 10)) #timeの表示位置
+        """
         
 
 
@@ -376,6 +431,27 @@ def main():
             
         if not octo_cat.right_shift_pressed:  # 右シフトが押されていない場合にのみ判定
             for rope in ropes:
+                #敵とぶつかった場合でも、前回ダメージを受けてから一定時間が経っていなければダメージを受けない
+                if(rope.judge(octo_cat) == True) and (octo_cat.life_lost_time + 30 < time_elapsed):
+                    octo_cat.life_lost_time = time_elapsed
+                    octo_cat.life -= 1
+                    if octo_cat.life == 0:
+                        endFlag = True
+
+
+        if octo_cat.life == 0:
+            endFlag = True
+            play_game_over_music() 
+            if pygame.mixer.music.get_busy():
+                pygame.mixer.music.stop()  # ゲームオーバー時にBGMを停止
+ # ゲームオーバー音楽を再生
+
+
+        #プレーヤーのライフの数だけハートを表示する
+            
+        if not octo_cat.right_shift_pressed:  # 右シフトが押されていない場合にのみ判定
+            for rope in ropes:
+                #敵とぶつかった場合でも、前回ダメージを受けてから一定時間が経っていなければダメージを受けない
                 if(rope.judge(octo_cat) == True) and (octo_cat.life_lost_time + 30 < time_elapsed):
                     octo_cat.life_lost_time = time_elapsed
                     octo_cat.life -= 1
@@ -388,11 +464,36 @@ def main():
             if octo_cat.life > 4:  # ライフが上限を超えないようにする
                 octo_cat.life = 4
 
+
+
+        if octo_cat.life == 0:
+            endFlag = True
+            play_game_over_music() 
+            if pygame.mixer.music.get_busy():
+                pygame.mixer.music.stop()  # ゲームオーバー時にBGMを停止
+ # ゲームオーバー音楽を再生
+
+
+        #プレーヤーのライフの数だけハートを表示する
+
+            if not octo_cat.right_shift_pressed:  # 右シフトが押されていない場合にのみ判定
+                for rope in ropes:
+                    if(rope.judge(octo_cat) == True) and (octo_cat.life_lost_time + 30 < time_elapsed):
+                        octo_cat.life_lost_time = time_elapsed
+                        octo_cat.life -= 1
+                        if octo_cat.life == 0:
+                            endFlag = True
+            else:
+                # 右シフトが押されている場合、ライフを増やす
+                octo_cat.life += 1
+                if octo_cat.life > 4:  # ライフが上限を超えないようにする
+                    octo_cat.life = 4
+
         for i in range(octo_cat.life - 1):
             screen.blit(heart_image,(i * 30,50))
         pygame.display.update()
 
-    quit(time_elapsed,force_quit)
+    quit(time_elapsed,force_quit) 
     quit(score, force_quit)
 
 
