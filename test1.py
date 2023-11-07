@@ -1,9 +1,10 @@
-import pygame
+import pygame 
 import sys
 
 import random 
 import numpy as np
 import datetime
+
 
 OCTO_CAT_VELOCITY = 4
 OCTO_CAT_JUMP = 20
@@ -65,7 +66,14 @@ class Octo_Cat:
         #if the player is inflicted with damage, it cannot be inflicted again for a certain amount of time
         #(ダメージを受けた後一定時間はダメージを受けない)
         self.life_lost_time = 0
+
         self.right_shift_pressed = False
+
+        #基本のキーボード状態をFalseとする
+        self.shift_pressed = False
+        #変数のためローカルに新しく速度を作成。デフォルトは4
+        self.OCTO_CAT_VELOCITY = 4
+
     
     #movements(動きに関して)
     def update(self,event):
@@ -80,8 +88,15 @@ class Octo_Cat:
                 self.move_down = True
             if event.key == pygame.K_SPACE:
                 self.immunity = True
+
             if event.key == pygame.K_RSHIFT:  # 右シフトキーが押されたとき
                 self.right_shift_pressed = True
+
+            #左シフトダウンの時の処理
+            if event.key == pygame.K_LSHIFT:
+                self.shift_pressed = True
+                self.update_velocity()
+
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_RIGHT:
                 self.move_right = False
@@ -91,10 +106,24 @@ class Octo_Cat:
                 self.move_up = False
             if event.key == pygame.K_DOWN:
                 self.move_down = False
+
             if event.key == pygame.K_RSHIFT:  # 右シフトキーが離されたとき
                 self.right_shift_pressed = False
+            #左シフトアップの時の処理
+            if event.key == pygame.K_LSHIFT:
+                self.shift_pressed = False
+                self.update_velocity()
 
 #defiens ropes and dots(線とドットの親クラス)
+
+    #シフトが押された際の速度を分岐させる関数
+    def update_velocity(self):
+        if self.shift_pressed == True:
+            self.OCTO_CAT_VELOCITY = 8
+        if self.shift_pressed == False :
+            self.OCTO_CAT_VELOCITY = 4
+#defiens ropes and dots
+
 class Rope:
     def __init__(self,x=0,y=0,velocity=0,tilt=0,color=0):
         self.x = x
@@ -254,6 +283,7 @@ def main():
                 force_quit = True
             octo_cat.update(event)
 
+
         # キーボード入力を処理
         keys = pygame.key.get_pressed()
 
@@ -294,16 +324,16 @@ def main():
 
         if octo_cat.move_right == True:
             if octo_cat.x < 620:
-                octo_cat.x += OCTO_CAT_VELOCITY
+                octo_cat.x += octo_cat.OCTO_CAT_VELOCITY
         if octo_cat.move_left == True:
             if octo_cat.x > 00:
-                octo_cat.x -= OCTO_CAT_VELOCITY
+                octo_cat.x -= octo_cat.OCTO_CAT_VELOCITY
         if octo_cat.move_up == True:
             if octo_cat.y > 00:
-                octo_cat.y -= OCTO_CAT_VELOCITY
+                octo_cat.y -= octo_cat.OCTO_CAT_VELOCITY
         if octo_cat.move_down == True:
             if octo_cat.y < 460:
-                octo_cat.y += OCTO_CAT_VELOCITY
+                octo_cat.y += octo_cat.OCTO_CAT_VELOCITY
 
         #make the instances of ropes and dots
         #(線とドットのインスタンスを作る)
@@ -371,27 +401,26 @@ def main():
 
 
         #プレーヤーのライフの数だけハートを表示する
-
-            if not octo_cat.right_shift_pressed:  # 右シフトが押されていない場合にのみ判定
-                for rope in ropes:
-                    if(rope.judge(octo_cat) == True) and (octo_cat.life_lost_time + 30 < time_elapsed):
-                        octo_cat.life_lost_time = time_elapsed
-                        octo_cat.life -= 1
-                        if octo_cat.life == 0:
-                            endFlag = True
-            else:
-                # 右シフトが押されている場合、ライフを増やす
-                octo_cat.life += 1
-                if octo_cat.life > 4:  # ライフが上限を超えないようにする
-                    octo_cat.life = 4
+            
+        if not octo_cat.right_shift_pressed:  # 右シフトが押されていない場合にのみ判定
+            for rope in ropes:
+                if(rope.judge(octo_cat) == True) and (octo_cat.life_lost_time + 30 < time_elapsed):
+                    octo_cat.life_lost_time = time_elapsed
+                    octo_cat.life -= 1
+                    if octo_cat.life == 0:
+                        endFlag = True
+            
+        if octo_cat.right_shift_pressed:
+            # 右シフトが押されている場合、ライフを増やす
+            octo_cat.life += 1
+            if octo_cat.life > 4:  # ライフが上限を超えないようにする
+                octo_cat.life = 4
 
         for i in range(octo_cat.life - 1):
             screen.blit(heart_image,(i * 30,50))
         pygame.display.update()
 
     quit(time_elapsed,force_quit)
-
-    quit(time_elapsed,force_quit) 
     quit(score, force_quit)
 
 
