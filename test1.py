@@ -13,6 +13,7 @@ pygame.display.set_caption("Jump the Rope")
 heart_image = pygame.image.load("ex05/images/heart.png")
 clock = pygame.time.Clock()
 
+
 def COLORS():
     x = random.randint(0,255)
     y =random.randint(0,255)
@@ -23,7 +24,7 @@ def COLORS():
 
 class Octo_Cat:
     def __init__(self,x,y):
-        #position
+        #Position
         self.x = x
         self.y = y
         #image before scaling
