@@ -1,11 +1,13 @@
 import pygame
 import sys
+
 import random 
 import numpy as np
 import datetime
 
 OCTO_CAT_VELOCITY = 4
 OCTO_CAT_JUMP = 20
+
 
 BGM_FILES = ["ex05/fig/BGM.mp3",
              "ex05/fig/baadakkuman.mp3",
@@ -24,6 +26,7 @@ pygame.display.set_caption("Jump the Rope")
 heart_image = pygame.image.load("ex05/images/heart.png")
 clock = pygame.time.Clock()
 
+
 def COLORS():
     x = random.randint(0,255)
     y =random.randint(0,255)
@@ -34,7 +37,11 @@ def COLORS():
 
 class Octo_Cat:
     def __init__(self,x,y):
+
         #position(プレーヤーのポジション)
+
+        #Position
+
         self.x = x
         self.y = y
         #image before scaling(サイズを変える前の画像)
@@ -99,12 +106,10 @@ class Rope:
         return
     def judge(self,octo_cat):
         return
-<<<<<<< HEAD
+
 
 #vertical ropes(垂直の線)
-=======
-        
->>>>>>> randomC
+
 class Straight_Rope(Rope):
     
     def update(self):
@@ -116,12 +121,10 @@ class Straight_Rope(Rope):
             self.x += self.velocity
         elif(self.direction == "LEFT"):
             self.x -= self.velocity
-<<<<<<< HEAD
+        # pygame.draw.line(screen, COLORS[3], [self.x, 0], [self.x, 480], 5)
 
-        pygame.draw.line(screen, COLORS[3], [self.x, 0], [self.x, 480], 5)
-=======
         pygame.draw.line(screen, COLORS(), [self.x, 0], [self.x, 480], 5)
->>>>>>> randomC
+
 
     #checks if the player and the rope collided
     #(プレーヤーとぶつかったか判定)
@@ -142,12 +145,10 @@ class Straight_Rope_Horizontal(Rope):
             self.y -= self.velocity
         elif(self.direction == "UP"):
             self.y += self.velocity
-<<<<<<< HEAD
-        
-        pygame.draw.line(screen, COLORS[3],[0, self.y], [640, self.y], 5)
-=======
+        # pygame.draw.line(screen, COLORS[3],[0, self.y], [640, self.y], 5)
+
         pygame.draw.line(screen, COLORS(),[0, self.y], [640, self.y], 5)
->>>>>>> randomC
+
 
     #checks if the player and the rope collided
     #(プレーヤーとぶつかったか判定)
@@ -162,12 +163,12 @@ class Shooting_Star(Rope):
     def update(self):
         self.x += self.tilt
         self.y += self.velocity
-<<<<<<< HEAD
 
-        pygame.draw.circle(screen, COLORS[self.color], [self.x, self.y], 6)
-=======
+
+        # pygame.draw.circle(screen, COLORS[self.color], [self.x, self.y], 6)
+
         pygame.draw.circle(screen, COLORS(), [self.x, self.y], 6)
->>>>>>> randomC
+
     
     #checks if the player and the dot collided
     #(プレーヤーとぶつかったか判定)
@@ -180,7 +181,7 @@ class Shooting_Star(Rope):
 
 pygame.mixer.music.stop()
 
-=======
+
 #起動時画面表示の処理
 
 def open():
@@ -228,16 +229,16 @@ def main():
     octo_cat = Octo_Cat(400,400)
     time_elapsed = 0
     force_quit = False
-<<<<<<< HEAD
+
     pygame.mixer.init()
     # ゲーム開始時に最初のBGMを再生
     pygame.mixer.music.load(BGM_FILES[CURRENT_BGM_INDEX])
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(-1)
     is_bgm_playing = True
-=======
+
     q = 0
->>>>>>> randomC
+
 
     ropes = []
     score = 0
